@@ -19,3 +19,10 @@ reddit = praw.Reddit(client_id=REDDIT_CLIENT_ID,
 
 reddit_financials = reddit.subreddit(
         'wallstreetbets+investing+stocks+options+SecurityAnalysis+RobinHood+tradevol+thewallstreet')
+
+for comment in reddit_financials.stream.comments():
+	df = pd.DataFrame({'id': [comment.id], 'text': [comment.body],
+                       'time': [comment.created_utc], 'subreddit_id': [comment.subreddit_id],
+                       'sentiment_score': [sid.polarity_scores(comment.body)['compound']]})
+	df.to_sql('reddit-comments', engine, if_exists='append')
+	
